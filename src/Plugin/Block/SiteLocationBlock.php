@@ -9,6 +9,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\sitelocation\Services\SiteLocationService;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Provides a 'Site Location' Block.
@@ -91,6 +92,17 @@ class SiteLocationBlock extends BlockBase implements ContainerFactoryPluginInter
    */
   public function getCacheTags() {
     return Cache::mergeTags(parent::getCacheTags(), ['sitelocation']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    $date_time = new DrupalDateTime();
+    $now = $date_time->getTimestamp();
+    $site_current_datetime = $date_time->createFromTimestamp($now);
+    $cache_every_min = (60 - (int) $site_current_datetime->format('s'));
+    return $cache_every_min;
   }
 
 }
