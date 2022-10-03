@@ -1,0 +1,13 @@
+sitelocation.settings:
+  type: config_object
+  label: 'Site location configuration'
+  mapping:
+    sitelocation_country:
+      type: string
+      label: 'United States'
+    sitelocation_city:
+      type: string
+      label: 'New York'
+    sitelocation_timezone:
+      type: string
+      label: 'America/New_York'
