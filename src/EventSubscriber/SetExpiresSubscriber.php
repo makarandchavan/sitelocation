@@ -4,30 +4,43 @@ declare(strict_types=1);
 
 namespace Drupal\sitelocation\EventSubscriber;
 
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\Core\Cache\Cache;
 
-class SetExpiresSubscriber implements EventSubscriberInterface
-{
-    public function onResponse(ResponseEvent $event)
-    {
-        $request = $event->getRequest();
-        $response = $event->getResponse();
-        if ($event->isMasterRequest()) {
-            $request_time = $request->server->get('REQUEST_TIME');
-            $expires_time = (new \Datetime())->setTimestamp($request_time + 60);
-            $response->setExpires($expires_time);
+/**
+ * Base class for event page laod.
+ */
+class SetExpiresSubscriber implements EventSubscriberInterface {
 
-            // Clear cache tags of our block.
-            Cache::invalidateTags(['sitelocation']);
-        }
-    }
+  /**
+   * Event subscriber.
+   *
+   * @param mixed $event
+   *   Object variable.
+   */
+  public function onResponse($event) {
+    $request = $event->getRequest();
+    $response = $event->getResponse();
+    if ($event->isMasterRequest()) {
+      $request_time = $request->server->get('REQUEST_TIME');
+      $expires_time = (new \Datetime())->setTimestamp($request_time + 60);
+      $response->setExpires($expires_time);
 
-    public static function getSubscribedEvents()
-    {
-        $events[KernelEvents::RESPONSE][] = ['onResponse'];
-        return $events;
+      // Clear cache tags of our block.
+      Cache::invalidateTags(['sitelocation']);
     }
+  }
+
+  /**
+   * Get Subscribed events.
+   *
+   * @return mixed
+   *   Variable.
+   */
+  public static function getSubscribedEvents() {
+    $events[KernelEvents::RESPONSE][] = ['onResponse'];
+    return $events;
+  }
+
 }
